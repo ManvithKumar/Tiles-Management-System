@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+
+    <title>Tiles</title>
+</head>
+<body>
+    <div class="flex justify-content-center">
+        <form action="">
+            <div>
+                <input type="file"><br/>
+            </div>
+            <div class="form-group">
+                <label for="">Name of Tiles :</label><br/>
+                <input type="text" placeholder="Name of Tile" id="tilename"/>
+            </div>
+            <div class="form-group">
+                <label for="country">Select a country:</label>
+                <select id="tiletypes">
+                  <option value="">Select</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="">Stock :</label><br/>
+                <input type="text" placeholder="Stock" id="stock"/>
+            </div>
+            <div class="form-group">
+                <label for="">Price in $ :</label><br/>
+                <input type="text" placeholder="$" id="price"/>
+            </div>
+
+            <button class="btn btn-success">Submit</button>
+        </form>
+    </div>
+</body>
+<script src="../scripts/tiles.js"></script>
+</html>
