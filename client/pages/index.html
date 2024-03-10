@@ -4,29 +4,51 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="../style/global.css">
     <title>Document</title>
 </head>
 <body>
-    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
-        <div class="container">
-          <a class="navbar-brand" href="#">Your Logo</a>
-          <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-          </button>
-          <div class="collapse navbar-collapse" id="navbarNav">
-            <ul class="navbar-nav ml-auto">
-              <li class="nav-item active">
-                <a class="nav-link" href="#">Home <span class="sr-only">(current)</span></a>
-              </li>
-              <li class="nav-item">
-                <a class="nav-link" href="/client/pages/tiles.html">Create Tiles</a>
-              </li>
-              <li class="nav-item">
-                <a class="nav-link" href="#">Contact</a>
-              </li>
-            </ul>
-          </div>
-        </div>
-      </nav>
+  <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+    <div class="container">
+      <a class="navbar-brand" href="../pages/index.html">Your Logo</a>
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav ml-auto">
+          <li class="nav-item active">
+            <a class="nav-link" href="../pages/index.html">Home <span class="sr-only">(current)</span></a>
+          </li>
+          <li class="nav-item dropdown" id="admin-routes">
+            <a class="nav-link dropdown-toggle" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+              Manage
+            </a>
+            <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+              <a class="dropdown-item" href="/client/pages/tiles.html">Manage Tiles</a>
+              <a class="dropdown-item" href="/client/pages/users.html">Manage Users</a>
+            </div>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/client/pages/profile.html ">Profile</a>
+          </li>
+          <li class="nav-item">
+            <span  id="nav_username"></span>
+            <img src="/client/assets/logout.png" class="icons cursor-pointer" onclick="logout()" alt="" srcset="">
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+  
+
+      <!-- Tiles -->
+
+      <div id="card-container">
+
+      </div>
+
+
 </body>
+<script src="../scripts/index.js"></script>
+<script src="../scripts/nav.js"></script>
 </html>

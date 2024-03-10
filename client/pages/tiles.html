@@ -3,38 +3,145 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-
-    <title>Tiles</title>
+    <title>Tile Management</title>
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
 </head>
 <body>
-    <div class="flex justify-content-center">
-        <form action="">
-            <div>
-                <input type="file"><br/>
-            </div>
-            <div class="form-group">
-                <label for="">Name of Tiles :</label><br/>
-                <input type="text" placeholder="Name of Tile" id="tilename"/>
-            </div>
-            <div class="form-group">
-                <label for="country">Select a country:</label>
-                <select id="tiletypes">
-                  <option value="">Select</option>
-                </select>
-            </div>
-            <div class="form-group">
-                <label for="">Stock :</label><br/>
-                <input type="text" placeholder="Stock" id="stock"/>
-            </div>
-            <div class="form-group">
-                <label for="">Price in $ :</label><br/>
-                <input type="text" placeholder="$" id="price"/>
-            </div>
+    <div class="container">
+        <h1 class="my-4">Tile Management</h1>
+        
+        <!-- Display Tiles -->
+        <div id="tiles-list"></div>
 
-            <button class="btn btn-success">Submit</button>
-        </form>
+        <!-- Add New Tile Form -->
+        <h2 class="mt-4">Add New Tile</h2>
+        <form id="add-tile-form">
+          <div class="form-group">
+              <label for="tname">Tile Name:</label>
+              <input type="text" class="form-control" id="tname" required>
+          </div>
+          <div class="form-group">
+              <label for="type">Tile Type:</label>
+              <select class="form-control" id="type" required>
+                  <option value="">Select Type</option>
+                  <option value="Kitchen">Kitchen</option>
+                  <option value="Bathroom">Bathroom</option>
+                  <option value="Floor">Floor</option>
+                  <option value="Exterior Walls">Exterior Walls</option>
+                  <option value="Roof">Roof</option>
+                  <option value="Pool">Pool</option>
+              </select>
+          </div>
+          <div class="form-group">
+            <label for="stock">Description:</label>
+            <input type="text" class="form-control" id="desc" required>
+        </div>
+          <div class="form-group">
+              <label for="stock">Stock:</label>
+              <input type="number" class="form-control" id="stock" required>
+          </div>
+          <div class="form-group">
+              <label for="price">Price:</label>
+              <input type="number" class="form-control" id="price" required>
+          </div>
+          <div class="form-group">
+              <label for="image">Image:</label>
+              <input type="text" class="form-control-file" id="image"  required>
+          </div>
+          <button type="submit" class="btn btn-primary">Add Tile</button>
+      </form>
+  </div>
     </div>
+
+    <!-- Bootstrap JS and custom JavaScript -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script>
+        // Fetch tiles and display them when the page loads
+        document.addEventListener('DOMContentLoaded', async () => {
+            await fetchTiles();
+        });
+
+        // Function to fetch tiles from the API
+        const fetchTiles = async () => {
+            const response = await fetch('http://localhost:9000/tiles');
+            const tiles = await response.json();
+            displayTiles(tiles);
+        };
+
+        // Function to display tiles in the UI
+        const displayTiles = (tiles) => {
+            const tilesList = document.getElementById('tiles-list');
+            tilesList.innerHTML = ''; // Clear previous tiles
+
+            tiles.forEach(tile => {
+                const tileItem = document.createElement('div');
+                tileItem.classList.add('card', 'mb-2');
+
+                tileItem.innerHTML = `
+                    <div class="card-body">
+                        <h5 class="card-title">${tile.tname}</h5>
+                        <p class="card-text">Type: ${tile.type}</p>
+                        <p class="card-text">Stock: ${tile.stock}</p>
+                        <p class="card-text">Price: ${tile.price}</p>
+                        <button class="btn btn-danger" onclick="deleteTile(${tile.tid})">Delete</button>
+                    </div>
+                `;
+
+                tilesList.appendChild(tileItem);
+            });
+        };
+
+        // Function to add a new tile
+        document.getElementById('add-tile-form').addEventListener('submit', async (event) => {
+            event.preventDefault();
+
+            const formData = {
+                tname: document.getElementById('tname').value,
+                type: document.getElementById('type').value,
+                stock: document.getElementById('stock').value,
+                price: document.getElementById('price').value,
+                image:document.getElementById("image").value,
+                description:document.getElementById("desc").value
+            };
+
+            try {
+                const response = await fetch('http://localhost:9000/tiles', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(formData)
+                });
+
+                if (!response.ok) {
+                    throw new Error('Failed to add tile');
+                }
+
+                await fetchTiles(); // Refresh tiles after adding a new one
+            } catch (error) {
+                console.error('Error adding tile:', error);
+            }
+        });
+
+        // Function to delete a tile by its ID
+        const deleteTile = async (id) => {
+            try {
+                const response = await fetch(`http://localhost:9000/tiles/${id}`, {
+                    method: 'DELETE'
+                });
+
+                if (!response.ok) {
+                    throw new Error('Failed to delete tile');
+                }
+
+                await fetchTiles(); // Refresh tiles after deletion
+            } catch (error) {
+                console.error('Error deleting tile:', error);
+            }
+        };
+    </script>
 </body>
-<script src="../scripts/tiles.js"></script>
 </html>

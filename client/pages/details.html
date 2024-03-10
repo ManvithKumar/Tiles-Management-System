@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="../style/global.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <title>Details</title>
+</head>
+<body>
+
+  <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+    <div class="container">
+      <a class="navbar-brand" href="#">Your Logo</a>
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav ml-auto">
+          <li class="nav-item active">
+            <a class="nav-link" href="#">Home <span class="sr-only">(current)</span></a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/client/pages/tiles.html">Create Tiles</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#">Contact</a>
+          </li>
+          <li class="nav-item">
+            <span  id="nav_username"></span>
+            <img src="/client/assets/logout.png" class="icons cursor-pointer" onclick="logout()" alt="" srcset="">
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+
+
+
+
+    <div class="container">
+        <div class="row">
+            <div class="col">
+                <img src="" alt="">
+            </div>
+            <div class="col">
+                <div>
+                    <div class="mt-1 p-2">
+                        <h2>Name  : <strong id="titleName"></strong></h2>
+                        <span>Type  : <strong id="type"></strong></span><br/>
+                        <span>Price : $<strong id="price"></strong></span>
+                    </div>          
+                    <div class="mt-3  p-2">
+                      <button  class="btn btn-secondary"  onclick="decrement()" id="decrement-btn">-</button>
+                        <span id="quantity"></span>
+                      <button class="btn btn-secondary" onclick="increment()" id="increment-btn">+</button>
+                    </div>
+                    <div  class="mt-3  p-2">
+                      <h4>Total amount : $ <strong id="finalprice"></strong> </h4>
+                    </div>
+                    <div>
+                        <button class="btn btn-info" id="openModalBtn">Order</button>
+                    </div>
+                </div>
+                <div class="mt-2">
+                    <h3 class="p-2">Add Your Reviews :</h3>
+                    <input type="text"  class="form-control p-2" id="comment"  placeholder="Add Your Comments"> 
+                    <div class="p-2">
+                      <span>Ratings :</span><input type="range" min="1" max="5" id="rating"><br/>
+                    </div>
+                    <button class="btn btn-success" id="rating-btn">Submit</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- Reviews -->
+
+    <div class="container mt-5">
+      <h2>Reviews</h2>
+      <div id="reviews"></div>
+    </div>
+
+    <!-- modal  -->
+    <div class="modal" id="myModal">
+        <div class="modal-dialog">
+          <div class="modal-content">
+          
+            <!-- Modal Header -->
+            <div class="modal-header">
+              <h4 class="modal-title">Confirm Order</h4>
+              <button type="button" class="close" id="closeModalBtn">&times;</button>
+            </div>
+            
+            <!-- Modal Body -->
+            <div class="modal-body">
+                <div class="flex justify-content-center">
+                   <h5>
+                   <span> Do You Want To Order This Product : <strong id="productName"></strong></span>
+                   </h5>
+                </div>
+            
+            <!-- Modal Footer -->
+            <div class="modal-footer">
+              <div>
+                <button type="button" class="btn btn-success" id="confirmBtn" >Confirm</button>
+              <button type="button" class="btn btn-danger" id="closeModalBtn">Cancel</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+</body>
+<script src="../scripts/details.js"></script>
+<script src="../scripts/nav.js"></script>
+</html>

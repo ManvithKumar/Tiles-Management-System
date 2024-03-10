@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="../style/global.css">
+    <title>Payment</title>
+</head>
+
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+        <div class="container">
+            <a class="navbar-brand" href="../pages/index.html">Your Logo</a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
+                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ml-auto">
+                    <li class="nav-item active">
+                        <a class="nav-link" href="../pages/index.html">Home <span class="sr-only">(current)</span></a>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" id="navbarDropdown" role="button" data-toggle="dropdown"
+                            aria-haspopup="true" aria-expanded="false">
+                            Manage
+                        </a>
+                        <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                            <a class="dropdown-item" href="/client/pages/tiles.html">Manage Tiles</a>
+                            <a class="dropdown-item" href="/client/pages/users.html">Manage Users</a>
+                        </div>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">Contact</a>
+                    </li>
+                    <li class="nav-item">
+                        <span id="nav_username"></span>
+                        <img src="/client/assets/logout.png" class="icons cursor-pointer" onclick="logout()" alt=""
+                            srcset="">
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+
+
+    <div class="container">
+        <div class="row">
+            <div class="col">
+                <div>
+                    <label for="">Payment Type:</label><br />
+                    <div class="d-flex justify-content-between">
+                        <div class="form-check">
+                            <input class="form-check-input payment-icons-checkbox"  type="radio" name="flexRadioDefault"
+                                id="paymenType" checked>
+                            <img src="../assets/images/logo.png" class="payment-icons drop-shadow" alt="" srcset="">
+                            <label class="form-check-label" for="flexRadioDefault2"></label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input payment-icons-checkbox" type="radio" name="flexRadioDefault"
+                                id="flexRadioDefault1">
+                            <img src="../assets/images/google-pay.png" class="payment-icons drop-shadow" alt=""
+                                srcset="">
+                            <label class="form-check-label" for="flexRadioDefault1"></label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input payment-icons-checkbox" type="radio" name="flexRadioDefault"
+                                id="flexRadioDefault2" checked>
+                            <img src="../assets/images/apple-pay.png" class="payment-icons drop-shadow" alt=""
+                                srcset="">
+                            <label class="form-check-label" for="flexRadioDefault2"></label>
+                        </div>
+                    </div>
+                    <form class="form-group" action="">
+                        <div>
+                            <label for="">Card Number</label><br />
+                            <input type="text" class="form-control" id="cardnumber" placeholder="Card Number" />
+                        </div>
+                        <div>
+                            <label for="">Shipping Address</label><br />
+                            <input type="text" class="form-control" id="address" placeholder="Shipping Address" />
+                        </div>
+                        <div>
+                            <label for="">Phone Number</label><br />
+                            <input type="text" class="form-control" id="phonenumber" placeholder="Mobile Number" />
+                        </div>
+                        <div>
+                            <div>
+                                <label for="">Expiry Date</label><br />
+                                <input type="text" class="form-control" id="expiryDate" placeholder="00/00" />
+                            </div>
+                            <div>
+                                <label for="">CVV</label><br />
+                                <input type="text" class="form-control" id="cvv" placeholder="_ _ _" />
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <div class="col ">
+                <div class="d-flex justify-content-center align-items-center flex-wrap">
+                    <div>
+                        <img src="" id="tileImage" alt="">
+                    </div>
+                    <div id="home-container">
+                        <div id="tile-container">
+
+                        </div>
+                        <div id="sum-container">
+
+                        </div>
+                        <button class="btn btn-success" id="confirm">Confirm Payment</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <!-- Bootstrap modal -->
+<div class="modal fade" id="orderSuccessModal" tabindex="-1" role="dialog" aria-labelledby="orderSuccessModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="orderSuccessModalLabel">Order Placed Successfully</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          Your order has been successfully placed.
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+
+</body>
+<script>
+
+    var tileData;
+    var orderData;
+
+
+    var loggedUser;
+    var tilesData;
+    const getLoggedUser = () => {
+        if (sessionStorage.getItem("user")) {
+            loggedUser = JSON.parse(sessionStorage.getItem("user"))
+            document.getElementById("nav_username").innerHTML = loggedUser.username;
+        }
+        else {
+            window.location.href = "/client/pages/login.html";
+        }
+    }
+    getLoggedUser();
+
+    async function getOrderInfoFromAPI() {
+        orderData = JSON.parse(localStorage.getItem('order'));
+        const oid = orderData ? orderData.oid : null;
+
+        if (!oid) {
+            console.error('Order ID not found in localStorage');
+            return;
+        }
+
+        try {
+            // Call the API to get tile information using the oid
+            const response = await fetch(`http://localhost:9000/orders/tileInfo/${oid}`);
+            if (!response.ok) {
+                throw new Error('Failed to fetch tile information');
+            }
+            const data = await response.json();
+            console.log('Tile Information:', data);
+            tileData = data;
+
+            createBill(tileData, orderData)
+
+        } catch (error) {
+            console.error('Error fetching tile information:', error.message);
+        }
+    }
+
+    const createBill = (tileData, orderData) => {
+        const home = document.getElementById("home-container");
+        const tileInfo = document.getElementById("tile-container");
+        const sum = document.getElementById("sum-container");
+
+        // Create elements
+        const nameSpan = document.createElement("span");
+        const quantitySpan = document.createElement("span");
+        const pricePerSpan = document.createElement("span");
+        const finalPriceSpan = document.createElement("span");
+
+        // Set label text content and strong tag for each value
+        nameSpan.innerHTML = `<span>Name:</span> <strong>${tileData.tname}</strong><br>`;
+        quantitySpan.innerHTML = `<span>Quantity:</span> <strong>${orderData.quantity}</strong><br>`;
+        pricePerSpan.innerHTML = `<span>Price Per:</span> <strong>$${tileData.price}</strong><br>`;
+        finalPriceSpan.innerHTML = `<span class="mt-3 text-success">Final Price:</span> <strong>$${orderData.price}</strong><br>`;
+
+        // Append elements to their respective containers
+        tileInfo.appendChild(nameSpan);
+        tileInfo.appendChild(quantitySpan);
+        tileInfo.appendChild(pricePerSpan);
+        sum.appendChild(finalPriceSpan);
+    };
+
+
+    getOrderInfoFromAPI();
+
+    const makePayment = () => {
+    // Get form data
+    const formData = {
+        uid: loggedUser.uid,
+        oid: orderData.oid,
+        price: orderData.price,
+        paymentType: "VISA",
+        address: document.getElementById("address").value,
+        phonenumber: document.getElementById("phonenumber").value,
+    };
+    // Make the payment request
+    fetch('http://localhost:9000/payments', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            // Add any additional headers if needed
+        },
+        body: JSON.stringify(formData),
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('Failed to make payment');
+        }
+        return response.json();
+    })
+    .then(data => {
+        // Handle successful payment response
+        $('#orderSuccessModal').modal('show');
+        setTimeout(()=>{
+            window.location.href ="/client/pages/index.html"
+        },1500)
+        
+    })
+    .catch(error => {
+        // Handle payment failure
+        console.error('Error making payment:', error);
+        // Optionally, display an error message to the user
+    });
+};
+
+document.getElementById("confirm").addEventListener("click",makePayment);
+</script>
+
+</html>

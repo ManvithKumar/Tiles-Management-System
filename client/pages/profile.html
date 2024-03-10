@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+<div class="container">
+    <div class="row">
+        <div class="col">
+            <div>
+                <h2>User Profile</h2>
+            </div>
+            <div id="user-info">
+
+            </div>
+        </div>
+        <div class="col">
+
+        </div>
+    </div>
+
+</div>
+</body>
+<script>
+    var loggedUser;
+    var orders;
+    var payments;
+
+
+    const getLoggedUser = () => {
+        if (sessionStorage.getItem("user")) {
+            loggedUser = JSON.parse(sessionStorage.getItem("user"))
+            document.getElementById("nav_username").innerHTML = loggedUser.username;
+        }
+        else {
+            window.location.href = "/client/pages/login.html";
+        }
+    }
+    getLoggedUser();
+
+    const assignUser = () =>{
+       const user =  document.getElementById("user-info");
+       const name = document.createElement("h2");
+       const email = document.createElement("h4");
+
+       name.textContent = loggedUser.name;
+       email.textContent = loggedUser.email;
+
+        user.appendChild(name)
+        user.appendChild(email)
+    }
+    assignUser()
+
+
+    const getOrders = async (uid) =>{
+        const response = await fetch(`http://localhost:9000/orders/${uid}`);
+        const orders = await response.json();
+        return orders;
+    }    
+
+    const getPayments = async (uid) =>{
+        const response = await fetch(`http://localhost:9000/payments/${uid}`);
+        const payments = await response.json();
+        return payments;
+    }   
+
+    orders = getOrders(loggedUser.uid);
+    payments = getPayments(loggedUser.uid)
+
+</script>
+
+</html>

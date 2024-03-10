@@ -1,0 +1,32 @@
+.icons {
+    width: 18px;
+    height: 18px;
+}
+
+.payment-icons {
+    width: 47px;
+    height: 45px;
+}
+
+.payment-icons-checkbox {
+    margin-top: 15px;
+}
+
+.drop-shadow {
+    /* filter: drop-shadow(0 0  20px #121212); */
+}
+#question{
+    cursor: pointer;
+}
+#register-container{
+    margin-top: 100px;
+    display: none;
+}
+#login-container{
+    margin-top: 100px;
+    display: block;
+}
+#card-container{
+    display: grid;
+    grid-template-columns: auto auto auto auto;
+}

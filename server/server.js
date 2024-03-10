@@ -1,5 +1,6 @@
 const express = require('express');
 const sqlite = require('sqlite3').verbose()
+const cors = require('cors')
 const multer = require('multer')
 const colors = require('colors')
 const moment = require('moment')
@@ -7,6 +8,8 @@ const moment = require('moment')
 const app = express();
 const PORT = process.env.PORT || 9000;
 app.use(express.json());
+app.use(cors())
+
 
 const db = new sqlite.Database('./tms.db',sqlite.OPEN_READWRITE,(err)=>{
     if (err) return console.error(err.message)
@@ -55,17 +58,16 @@ app.post('/users/login', (req, res) => {
 
 // Create a new user  (Register)
 app.post('/users', (req, res) => {
-  var uid;
-  var address;
-  var role="user";
-  const  createdOn = moment().format("Do MMMM YYYY");
-  const { username, email,password } = req.body;
-  db.run("INSERT INTO users (uid,username,email,address,password,createdOn,role) VALUES (?,?,?,?,?,?,?)", 
-  [uid,username,email,address,password,createdOn,role], function(err) {
-    if (err) {
-      return res.status(500).json({ error: err.message });
-    }
-    res.json({ id: this.lastID });
+  const { username, email, password, address } = req.body;
+  const role = "user";
+  const createdOn = moment().format("Do MMMM YYYY");
+
+  db.run("INSERT INTO users (username, email, password, address, createdOn, role) VALUES (?, ?, ?, ?, ?, ?)",
+    [username, email, password, address, createdOn, role], function(err) {
+      if (err) {
+        return res.status(500).json({ error: err.message });
+      }
+      res.json({ id: this.lastID, username, email, address, createdOn, role });
   });
 });
 
@@ -114,22 +116,68 @@ const storage = multer.diskStorage({
       res.json(rows);
     });
   });
+
+  app.get('/tiles/:id', (req, res) => {
+    const id = req.params.id;
+    db.get("SELECT * FROM tiles WHERE tid = ?", id, (err, row) => {
+      if (err) {
+        return res.status(500).json({ error: err.message });
+      }
+      if (!row) {
+        return res.status(404).json({ error: 'Tile not found' });
+      }
+      res.json(row);
+    });
+  });
+  
+
   
   // Create a new tile
-  app.post('/tiles', upload.single('image'), (req, res) => {
-    const { tname, type, stock, price } = req.body;
+  app.post('/tiles', (req, res) => {
+    const { tname, type, stock, price,image,description } = req.body;
+    var tid;
     const  createdOn = moment().format("Do MMMM YYYY");
-    const image = req.file ? req.file.path : null;
     db.run(`
-      INSERT INTO tiles (tname, type, stock, price, createdOn, image)
-      VALUES (?, ?, ?, ?, ?, ?)
-    `, [tname, type, stock, price, createdOn, image], function(err) {
+      INSERT INTO tiles (tid,tname, type, stock, price, image,description)
+      VALUES (?, ?, ?, ?, ?, ?,?)
+    `, [tid,tname, type, stock, price, image,description], function(err) {
       if (err) {
         return res.status(500).json({ error: err.message });
       }
       res.json({ tid: this.lastID });
     });
   });
+
+  app.put('/tiles/:tid', (req, res) => {
+    const tid = req.params.tid;
+    const { tname, type, stock, price,image,description } = req.body;
+    const createdOn = moment().format("Do MMMM YYYY");
+    
+    db.run(`
+      UPDATE tiles
+      SET tname = ?, type = ?, stock = ?, price = ?, image = ?,description = ?
+      WHERE tid = ?
+    `, [tname, type, stock, price, image,description, tid], function(err) {
+      if (err) {
+        return res.status(500).json({ error: err.message });
+      }
+      res.json({ tid });
+    });
+  });
+  
+
+
+  // Delete a tile
+app.delete('/tiles/:id', (req, res) => {
+  const id = req.params.id;
+  db.run(`DELETE FROM tiles WHERE tid = ?`, id, function(err) {
+    if (err) {
+      return res.status(500).json({ error: err.message });
+    }
+    res.json({ message: 'Tile deleted successfully' });
+  });
+});
+
 
 
 
@@ -200,21 +248,43 @@ app.get('/reviews', (req, res) => {
     });
   });
 
-
-//Orders
-app.post('/orders', (req, res) => {
-    const  createdOn = moment().format("Do MMMM YYYY");
-    const { uid, tid, price, quantity, deliveredOn } = req.body;
-    db.run(`
-      INSERT INTO orders (uid, tid, price, quantity, orderedOn, deliveredOn)
-      VALUES (?, ?, ?, ?, ?, ?)
-    `, [uid, tid, price, quantity, orderedOn, deliveredOn], function(err) {
+  app.get('/reviews/tiles/:tid', (req, res) => {
+    const tid = req.params.tid;
+    db.all("SELECT * FROM reviews WHERE tid = ?", tid, (err, rows) => {
       if (err) {
         return res.status(500).json({ error: err.message });
       }
-      res.json({ oid: this.lastID });
+      res.json(rows);
     });
   });
+
+
+
+//Orders
+
+app.post('/orders', (req, res) => {
+  const orderdOn = moment().format("Do MMMM YYYY");
+  const { uid, tid, price, quantity, deliveredOn } = req.body;
+  db.run(`
+    INSERT INTO orders (uid, tid, price, quantity, orderdOn, deliveredOn)
+    VALUES (?, ?, ?, ?, ?, ?)
+  `, [uid, tid, price, quantity, orderdOn, deliveredOn], function(err) {
+      if (err) {
+          return res.status(500).json({ error: err.message });
+      }
+
+      const orderId = this.lastID;
+
+      // Select the inserted order from the database
+      db.get(`SELECT * FROM orders WHERE oid = ?`, [orderId], (err, row) => {
+          if (err) {
+              return res.status(500).json({ error: err.message });
+          }
+          res.json({ order: row }); // Return the inserted order
+      });
+  });
+});
+
   
   // Read Orders (GET)
   app.get('/orders', (req, res) => {
@@ -260,11 +330,11 @@ app.post('/orders', (req, res) => {
   // Create Payment (POST)
 app.post('/payments', (req, res) => {
     const  createdOn = moment().format("Do MMMM YYYY");
-    const { uid, oid, price, paymentType } = req.body;
+    const { uid, oid, price, paymentType,address,phonenumber } = req.body;
     db.run(`
-      INSERT INTO payment (uid, oid, price, paymentType, createdOn)
+      INSERT INTO payment (uid, oid, price, paymentType, createdOn,address,phonenumber)
       VALUES (?, ?, ?, ?, ?)
-    `, [uid, oid, price, paymentType, createdOn], function(err) {
+    `, [uid, oid, price, paymentType, createdOn,address,phonenumber], function(err) {
       if (err) {
         return res.status(500).json({ error: err.message });
       }
@@ -335,6 +405,30 @@ app.get('/payments/:uid', (req, res) => {
       res.json(rows);
     });
   });
+
+
+  app.get('/orders/tileInfo/:oid/', (req, res) => {
+    const oid = req.params.oid;
+  
+    db.get(`
+      SELECT t.tname, t.type,t.price,t.image
+      FROM orders AS o
+      JOIN tiles AS t ON o.tid = t.tid
+      WHERE o.oid = ?
+    `, [oid], (err, row) => {
+      if (err) {
+        return res.status(500).json({ error: err.message });
+      }
+  
+      if (!row) {
+        return res.status(404).json({ error: "Order not found" });
+      }
+  
+      res.json({ tname: row.tname, type: row.type, image:row.image, price:row.price });
+    });
+  });
+  
+
 
 
 // Start the server

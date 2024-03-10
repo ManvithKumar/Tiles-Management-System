@@ -5,18 +5,23 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Login Page</title>
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-
+  <link rel="stylesheet" href="../style/global.css">
   <style>
     body {
       background-color: #f8f9fa;
     }
     .login-container {
-      margin-top: 100px;
+      margin-top: 100px;  
     }
   </style>
+  <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+  
 </head>
 <body>
-  <div class="container login-container">
+  <!-- for login -->
+  <div class="container" id="login-container">
     <div class="row justify-content-center">
       <div class="col-md-6">
         <div class="card">
@@ -26,19 +31,54 @@
           <div class="card-body">
             <form>
               <div class="form-group">
-                <label for="username">Username</label>
-                <input type="text" class="form-control" id="username" placeholder="Enter username">
+                <label for="username">Email</label>
+                <input type="text" class="form-control" id="email" placeholder="Enter username">
               </div>
               <div class="form-group">
                 <label for="password">Password</label>
                 <input type="password" class="form-control" id="password" placeholder="Enter password">
               </div>
-              <button type="submit" class="btn btn-primary btn-block">Login</button>
+              <button type="submit" id="login-btn" class="btn btn-primary btn-block">Login</button>
             </form>
           </div>
         </div>
       </div>
     </div>
   </div>
+  <!-- for  register -->
+  <div class="container "  id="register-container">
+    <div class="row justify-content-center">
+      <div class="col-md-6">
+        <div class="card">
+          <div class="card-header bg-primary text-white">
+            <h3 class="text-center">Register</h3>
+          </div>
+          <div class="card-body">
+            <form>
+              <div class="form-group">
+                <label for="username">Username</label>
+                <input type="text" class="form-control" id="reg_username" placeholder="Enter username">
+              </div>
+              <div class="form-group">
+                <label for="username">Email</label>
+                <input type="text" class="form-control" id="reg_email" placeholder="Enter username">
+              </div>
+              <div class="form-group">
+                <label for="password">Password</label>
+                <input type="password" class="form-control" id="reg_password" placeholder="Enter password">
+              </div>
+              <button type="submit" id="register-btn" class="btn btn-primary btn-block">Register</button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="d-flex justify-content-center">
+    <span id="question"></span>
+   </div>
+
 </body>
+<script src="../scripts/login.js"></script>
 </html>
