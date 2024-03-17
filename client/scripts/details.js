@@ -4,10 +4,24 @@ var reviewsData;
 var amount = 0;
 var quantity = 1;
 var originalPrice = 0;
+
+const checkAdmin  = (data) =>{
+    console.log(data);
+    if(data.role !== "admin")
+    {
+      document.getElementById("admin-routes").innerHTML=""
+    }
+    else{
+      document.getElementById("admin-routes").style.display="block"
+    }
+  }
+
+
 const getLoggedUser = () => {
     if (sessionStorage.getItem("user")) {
         loggedUser = JSON.parse(sessionStorage.getItem("user"))
         document.getElementById("nav_username").innerHTML = loggedUser.username;
+        checkAdmin(loggedUser)
     }
     else {
         window.location.href = "/client/pages/login.html";
@@ -24,6 +38,8 @@ const getTileDetails = () => {
         document.getElementById("quantity").innerHTML = quantity;
         document.getElementById("finalprice").innerHTML = amount;
         document.getElementById("titleName").innerHTML = tileData.tname;
+        const imagecontainer = document.getElementById("imagediv")
+        imagecontainer.src=tileData.image;
         document.getElementById("type").innerHTML = tileData.type;
         document.getElementById("price").innerHTML = tileData.price;
         return tileData;

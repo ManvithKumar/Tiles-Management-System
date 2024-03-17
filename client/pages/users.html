@@ -10,37 +10,36 @@
 </head>
 <body>
 
-    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
-        <div class="container">
-          <a class="navbar-brand" href="../pages/index.html">Your Logo</a>
-          <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-          </button>
-          <div class="collapse navbar-collapse" id="navbarNav">
-            <ul class="navbar-nav ml-auto">
-              <li class="nav-item active">
-                <a class="nav-link" href="../pages/index.html">Home <span class="sr-only">(current)</span></a>
+  <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <div class="container">
+      <a class="navbar-brand" href="../pages/index.html">Tiles Managment System</a>
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav ml-auto">
+          <li class="nav-item">
+            <a style="text-decoration: none; color: white;" class="nav-link" href="../pages/index.html">Home <span class="sr-only"></span></a>
+          </li>
+            <div id="admin-routes" class="d-flex">
+              <li>
+                <a  class="nav-link" style="text-decoration: none; color: white;" href="/client/pages/tiles.html"> Tiles</a>
               </li>
-              <li class="nav-item dropdown" id="admin-routes">
-                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                  Manage
-                </a>
-                <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                  <a class="dropdown-item" href="/client/pages/tiles.html">Manage Tiles</a>
-                  <a class="dropdown-item" href="/client/pages/users.html">Manage Users</a>
-                </div>
+              <li>
+                <a  class="nav-link" style="text-decoration: none; color: white;" href="/client/pages/users.html"> Users</a>
               </li>
-              <li class="nav-item">
-                <a class="nav-link" href="#">Contact</a>
-              </li>
-              <li class="nav-item">
-                <span  id="nav_username"></span>
-                <img src="/client/assets/logout.png" class="icons cursor-pointer" onclick="logout()" alt="" srcset="">
-              </li>
-            </ul>
-          </div>
-        </div>
-      </nav>
+            </div>
+            <li class="nav-item">
+              <a  style="text-decoration: none; color: white;" class="nav-link" href="/client/pages/profile.html ">Orders</a>
+            </li>
+          <li class="nav-item navbar">
+            <span style="color: white;"  id="nav_username"></span>
+            <img src="/client/assets/logout (1).png" class="icons cursor-pointer" onclick="logout()" alt="" srcset="">
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
 
 
 
@@ -148,6 +147,36 @@
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
 <script>
+
+var loggedUser;
+var tilesData;
+
+const checkAdmin  = (data) =>{
+  console.log(data);
+  if(data.role !== "admin")
+  {
+    document.getElementById("admin-routes").innerHTML=""
+  }
+  else{
+    document.getElementById("admin-routes").style.display="block"
+  }
+}
+
+const getLoggedUser = () =>{
+ if( sessionStorage.getItem("user"))
+ {
+    loggedUser = JSON.parse(sessionStorage.getItem("user"))
+    document.getElementById("nav_username").innerHTML = loggedUser.username;
+    checkAdmin(loggedUser)
+ }
+ else{
+  window.location.href = "/client/pages/login.html";
+ }
+}
+ getLoggedUser();
+
+
+
   // Function to fetch and display users
   async function fetchUsers() {
     const response = await fetch('http://localhost:9000/users');
@@ -156,12 +185,12 @@
     userTableBody.innerHTML = '';
     users.forEach(user => {
       const row = `<tr>
-                    <td>${user.id}</td>
+                    <td>${user.uid}</td>
                     <td>${user.username}</td>
                     <td>${user.email}</td>
                     <td>
-                      <button type="button" class="btn btn-primary btn-sm" onclick="editUser(${user.id})" data-bs-toggle="modal" data-bs-target="#editUserModal">Edit</button>
-                      <button type="button" class="btn btn-danger btn-sm" onclick="confirmDelete(${user.id})" data-bs-toggle="modal" data-bs-target="#confirmDeleteModal">Delete</button>
+                      <button type="button" class="btn btn-primary btn-sm" onclick="editUser(${user.uid})" data-bs-toggle="modal" data-bs-target="#editUserModal">Edit</button>
+                      <button type="button" class="btn btn-danger btn-sm" onclick="confirmDelete(${user.uid})" data-bs-toggle="modal" data-bs-target="#confirmDeleteModal">Delete</button>
                     </td>
                   </tr>`;
       userTableBody.insertAdjacentHTML('beforeend', row);
@@ -216,11 +245,14 @@ registrationForm.addEventListener('submit', async (e) => {
 
   // Function to handle editing a user
 // Function to handle editing a user
-async function editUser(id) {
-  const response = await fetch(`http://localhost:9000/users/${id}`);
+async function editUser(uid) {
+  const response = await fetch(`http://localhost:9000/users/${uid}`);
   const user = await response.json();
   document.getElementById('editUsername').value = user.username;
   document.getElementById('editEmail').value = user.email;
+  document.getElementById('editPassword').value = user.password;
+
+
 
   const editUserForm = document.getElementById('editUserForm');
   editUserForm.addEventListener('submit', async (e) => {
@@ -228,11 +260,11 @@ async function editUser(id) {
     const updatedUserData = {
       username: document.getElementById('editUsername').value,
       email: document.getElementById('editEmail').value,
-      password: document.getElementById('editPassword').value // Include password in updated data
+      password: document.getElementById('editPassword').value 
     };
 
     try {
-      const response = await fetch(`http://localhost:9000/users/${id}`, {
+      const response = await fetch(`http://localhost:9000/users/${uid}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json'
@@ -254,11 +286,11 @@ async function editUser(id) {
 }
 
 
-function confirmDelete(id) {
+function confirmDelete(uid) {
     const confirmDeleteBtn = document.getElementById('confirmDeleteBtn');
     confirmDeleteBtn.addEventListener('click', async () => {
       try {
-        const response = await fetch(`/users/${id}`, {
+        const response = await fetch(`/users/${uid}`, {
           method: 'DELETE'
         });
 

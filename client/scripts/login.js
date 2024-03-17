@@ -11,18 +11,18 @@
 
 // checkLoggedUser()
 
-document.getElementById("question").innerHTML = "Dont have an account Register";
+document.getElementById("question").innerHTML = `Dont have an account <strong class="text-primary">Register</strong>`;
 var isRegister = false
 
 document.getElementById("question").addEventListener("click",()=>{
   isRegister = !isRegister;
   if(isRegister === false){
-    document.getElementById("question").innerHTML = "Dont have an account Register";
+    document.getElementById("question").innerHTML = `Dont have an account <strong class="text-primary">Register</strong>`;
     document.getElementById("login-container").style.display="block";
     document.getElementById("register-container").style.display="none"
   }
   else{
-    document.getElementById("question").innerHTML = "Already have an account Login";
+    document.getElementById("question").innerHTML = `Already have an account <strong class="text-primary">Login</strong>  `;
     document.getElementById("login-container").style.display="none"
     document.getElementById("register-container").style.display="block"
   }
@@ -32,6 +32,11 @@ document.getElementById("question").addEventListener("click",()=>{
 
 
 const login = async (e) => {
+  if(document.getElementById("email").value  === "" && document.getElementById("password").value==="")
+  {
+    alert("Please Fill the Fields")
+      return false
+  }
     e.preventDefault();
     const formData = {
       email: document.getElementById("email").value,
@@ -46,19 +51,29 @@ const login = async (e) => {
         body: JSON.stringify(formData), // Convert formData to JSON
       });
       
-      const data = await response.json(); 
+      const data = await response.json();
+      if(data.uid) 
+      {
       sessionStorage.setItem("user",JSON.stringify(data))
       window.location.href ="/client/pages/index.html"
+      }
+      else{
+        alert(data.error)
+      }
     } catch (error) {
       console.error("Error:", error);
     }
   };
   
-
 document.getElementById("login-btn").addEventListener("click",login);
 
 const register = async (e) => { // Add the 'e' parameter
   e.preventDefault();
+  if(document.getElementById("reg_username").value  === "" && document.getElementById("reg_email").value===""  && document.getElementById("reg_passwordt").value==="")
+  {
+    alert("Please Fill the Fields")
+      return false
+  }
   const formData = {
     username: document.getElementById("reg_username").value,
     email: document.getElementById("reg_email").value,

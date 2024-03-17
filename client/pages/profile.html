@@ -4,72 +4,124 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="../style/global.css">
+    <title>Orders</title>
 </head>
 
 <body>
+  <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <div class="container">
+      <a class="navbar-brand" href="../pages/index.html">Tiles Managment System</a>
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav ml-auto">
+          <li class="nav-item">
+            <a style="text-decoration: none; color: white;" class="nav-link" href="../pages/index.html">Home <span class="sr-only">(current)</span></a>
+          </li>
+            <div id="admin-routes" class="d-flex">
+              <li>
+                <a  class="nav-link" style="text-decoration: none; color: white;" href="/client/pages/tiles.html"> Tiles</a>
+              </li>
+              <li>
+                <a  class="nav-link" style="text-decoration: none; color: white;" href="/client/pages/users.html"> Users</a>
+              </li>
+            </div>
+            <li class="nav-item">
+              <a  style="text-decoration: none; color: white;" class="nav-link" href="/client/pages/profile.html ">Orders</a>
+            </li>
+          <li class="nav-item navbar">
+            <span style="color: white;"  id="nav_username"></span>
+            <img src="/client/assets/logout (1).png" class="icons cursor-pointer" onclick="logout()" alt="" srcset="">
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+
+
 <div class="container">
     <div class="row">
         <div class="col">
             <div>
-                <h2>User Profile</h2>
+                <h2>My Orders :</h2>
             </div>
-            <div id="user-info">
+            <div id="order-list" class="m-auto">
 
             </div>
-        </div>
-        <div class="col">
-
         </div>
     </div>
 
 </div>
 </body>
+<script src="/client/scripts/nav.js"></script>
 <script>
     var loggedUser;
     var orders;
-    var payments;
+    var payments=[];
+
+    const checkAdmin  = (data) =>{
+  console.log(data);
+  if(data.role !== "admin")
+  {
+    document.getElementById("admin-routes").innerHTML=""
+  }
+  else{
+    document.getElementById("admin-routes").style.display="block"
+  }
+}
 
 
     const getLoggedUser = () => {
         if (sessionStorage.getItem("user")) {
             loggedUser = JSON.parse(sessionStorage.getItem("user"))
             document.getElementById("nav_username").innerHTML = loggedUser.username;
+            checkAdmin(loggedUser)
         }
         else {
             window.location.href = "/client/pages/login.html";
         }
     }
     getLoggedUser();
-
-    const assignUser = () =>{
-       const user =  document.getElementById("user-info");
-       const name = document.createElement("h2");
-       const email = document.createElement("h4");
-
-       name.textContent = loggedUser.name;
-       email.textContent = loggedUser.email;
-
-        user.appendChild(name)
-        user.appendChild(email)
-    }
-    assignUser()
-
-
-    const getOrders = async (uid) =>{
-        const response = await fetch(`http://localhost:9000/orders/${uid}`);
-        const orders = await response.json();
-        return orders;
-    }    
+   
 
     const getPayments = async (uid) =>{
         const response = await fetch(`http://localhost:9000/payments/${uid}`);
         const payments = await response.json();
-        return payments;
-    }   
+        console.log(payments);
+        payments.forEach((res)=>{
+            const row = document.createElement("span")
+            row.innerHTML=`
+            <div class="row box mt-3  p-3" style="width:800px;">
+            <div class="col">
+                <img style="width:100px;height:100px;" src=${res.image} alt=""/>
+            </div> 
+            <div class="col">
+                <div class ="d-flex justify-content-between">
+                    <span>Name :${res.tname}</span>
+                    <span>${res.createdOn}</span>
+                </div>
+                <div class ="d-flex justify-content-between">
+                    <span>Rs :<strong>${res.price}</strong></span>
+                </div>
+            </div>
+            </div>
+            `
 
-    orders = getOrders(loggedUser.uid);
+            document.getElementById("order-list").appendChild(row)
+        })
+    }   
     payments = getPayments(loggedUser.uid)
+    
+    // const buildOrders = ()  =>{
+    //     console.log(payments);
+        
+        
+    // }
+    // buildOrders()
 
 </script>
 

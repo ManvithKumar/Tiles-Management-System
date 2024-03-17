@@ -4,61 +4,143 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Tile Management</title>
-    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="/client/style/global.css">
+    <script src="/client/scripts/nav.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
 </head>
 <body>
+
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container">
+          <a class="navbar-brand" href="../pages/index.html">Tiles Managment System</a>
+          <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+          </button>
+          <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ml-auto">
+              <li class="nav-item">
+                <a style="text-decoration: none; color: white;" class="nav-link" href="../pages/index.html">Home <span class="sr-only">(current)</span></a>
+              </li>
+                <div id="admin-routes" class="d-flex">
+                  <li>
+                    <a  class="nav-link" style="text-decoration: none; color: white;" href="/client/pages/tiles.html"> Tiles</a>
+                  </li>
+                  <li>
+                    <a  class="nav-link" style="text-decoration: none; color: white;" href="/client/pages/users.html"> Users</a>
+                  </li>
+                </div>
+                <li class="nav-item">
+                  <a  style="text-decoration: none; color: white;" class="nav-link" href="/client/pages/profile.html ">Orders</a>
+                </li>
+              <li class="nav-item navbar">
+                <span style="color: white;"  id="nav_username"></span>
+                <img src="/client/assets/logout (1).png" class="icons cursor-pointer" onclick="logout()" alt="" srcset="">
+              </li>
+            </ul>
+          </div>
+        </div>
+      </nav>
+
     <div class="container">
         <h1 class="my-4">Tile Management</h1>
         
         <!-- Display Tiles -->
+
+        <div class="accordion" id="accordionExample">
+            <div class="accordion-item">
+              <h2 class="accordion-header" id="headingOne">
+                <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                  <h2>
+                    Add Tiles
+                  </h2>
+                </button>
+              </h2>
+              <div id="collapseOne" class="accordion-collapse collapse show" aria-labelledby="headingOne" data-bs-parent="#accordionExample">
+                <div class="accordion-body">
+                    <form id="add-tile-form">
+                        <div class="form-group">
+                            <label for="tname">Tile Name:</label>
+                            <input type="text" class="form-control" id="tname" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="type">Tile Type:</label>
+                            <select class="form-control" id="type" required>
+                                <option value="">Select Type</option>
+                                <option value="Kitchen">Kitchen</option>
+                                <option value="Bathroom">Bathroom</option>
+                                <option value="Floor">Floor</option>
+                                <option value="Exterior Walls">Exterior Walls</option>
+                                <option value="Roof">Roof</option>
+                                <option value="Pool">Pool</option>
+                            </select>
+                        </div>
+                      <div class="form-group">
+                          <label for="stock">Description:</label>
+                          <input type="text" class="form-control" id="desc" required>
+                      </div>
+                        <div class="form-group">
+                            <label for="stock">Stock:</label>
+                            <input type="number" class="form-control" id="stock" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="price">Price:</label>
+                            <input type="number" class="form-control" id="price" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="image">Image:</label>
+                            <input type="text" class="form-control-file" id="image"  required>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Add Tile</button>
+                    </form>
+                </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+   
+
+
         <div id="tiles-list"></div>
 
         <!-- Add New Tile Form -->
-        <h2 class="mt-4">Add New Tile</h2>
-        <form id="add-tile-form">
-          <div class="form-group">
-              <label for="tname">Tile Name:</label>
-              <input type="text" class="form-control" id="tname" required>
-          </div>
-          <div class="form-group">
-              <label for="type">Tile Type:</label>
-              <select class="form-control" id="type" required>
-                  <option value="">Select Type</option>
-                  <option value="Kitchen">Kitchen</option>
-                  <option value="Bathroom">Bathroom</option>
-                  <option value="Floor">Floor</option>
-                  <option value="Exterior Walls">Exterior Walls</option>
-                  <option value="Roof">Roof</option>
-                  <option value="Pool">Pool</option>
-              </select>
-          </div>
-          <div class="form-group">
-            <label for="stock">Description:</label>
-            <input type="text" class="form-control" id="desc" required>
-        </div>
-          <div class="form-group">
-              <label for="stock">Stock:</label>
-              <input type="number" class="form-control" id="stock" required>
-          </div>
-          <div class="form-group">
-              <label for="price">Price:</label>
-              <input type="number" class="form-control" id="price" required>
-          </div>
-          <div class="form-group">
-              <label for="image">Image:</label>
-              <input type="text" class="form-control-file" id="image"  required>
-          </div>
-          <button type="submit" class="btn btn-primary">Add Tile</button>
-      </form>
-  </div>
-    </div>
+        
 
     <!-- Bootstrap JS and custom JavaScript -->
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
     <script>
+
+var loggedUser;
+var tilesData;
+
+const checkAdmin  = (data) =>{
+  console.log(data);
+  if(data.role !== "admin")
+  {
+    document.getElementById("admin-routes").innerHTML=""
+  }
+  else{
+    document.getElementById("admin-routes").style.display="block"
+  }
+}
+
+const getLoggedUser = () =>{
+ if( sessionStorage.getItem("user"))
+ {
+    loggedUser = JSON.parse(sessionStorage.getItem("user"))
+    document.getElementById("nav_username").innerHTML = loggedUser.username;
+    checkAdmin(loggedUser)
+ }
+ else{
+  window.location.href = "/client/pages/login.html";
+ }
+}
+ getLoggedUser();
+
         // Fetch tiles and display them when the page loads
         document.addEventListener('DOMContentLoaded', async () => {
             await fetchTiles();

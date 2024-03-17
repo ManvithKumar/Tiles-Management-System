@@ -1,14 +1,29 @@
 var loggedUser;
+var tilesData;
 
-const getLoggedUser = () => {
-  if (sessionStorage.getItem("user")) {
-    loggedUser = JSON.parse(sessionStorage.getItem("user"));
-    document.getElementById("nav_username").innerHTML = loggedUser.username;
-    console.log(loggedUser);
-  } else {
-    window.location.href = "/client/pages/login.html";
+const checkAdmin  = (data) =>{
+  console.log(data);
+  if(data.role !== "admin")
+  {
+    document.getElementById("admin-routes").innerHTML=""
   }
-};
+  else{
+    document.getElementById("admin-routes").style.display="block"
+  }
+}
+
+const getLoggedUser = () =>{
+ if( sessionStorage.getItem("user"))
+ {
+    loggedUser = JSON.parse(sessionStorage.getItem("user"))
+    document.getElementById("nav_username").innerHTML =loggedUser.username;
+    checkAdmin(loggedUser)
+ }
+ else{
+  window.location.href = "/client/pages/login.html";
+ }
+}
+ getLoggedUser();
 
 getLoggedUser();
 
